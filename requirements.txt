@@ -1,0 +1,12 @@
+fastparquet==0.7.2
+numpy==1.21.4
+pyarrow==6.0.1
+scikit-learn==1.0.1
+lingam==1.5.4
+causal-learn==0.1.2.1
+networkx==2.6.3
+lingam==1.5.4
+pytrends==4.7.3
+dowhy==0.7
+black==21.12b0
+openpyxl==3.0.9
