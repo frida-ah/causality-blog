@@ -1,8 +1,15 @@
-# import numpy as np
 import pandas as pd
 
 df = pd.read_excel("./data/output/data.xlsx")
-df = df[["date", "searches", "daily_avg_temperature", "duration_sunshine", "duration_rainfall"]]
+df = df[
+    [
+        "date",
+        "searches",
+        "duration_sunshine",
+        # "duration_rainfall",
+        "daily_avg_temperature",
+    ]
+]
 df = df.set_index("date")
 
 
@@ -18,14 +25,19 @@ def apply_directlingam(df):
 
     print(model.causal_order_)
     print(len(model.adjacency_matrix_))
-    labels = ["searches", "temp", "sun", "rain"]
+    labels = [
+        "searches",
+        "sun",
+        # "rain",
+        "temp",
+    ]
     dot = make_dot(model.adjacency_matrix_, ignore_shape=True, lower_limit=0.05, labels=labels)
     dot.format = "png"
     dot.render("directlingam")
     dot
 
 
-# apply_directlingam(df)
+apply_directlingam(df)
 
 
 def apply_varlingam(df):
@@ -40,13 +52,13 @@ def apply_varlingam(df):
     model.fit(df)
     labels = [
         "searches(t)",
-        "temp(t)",
         "sun(t)",
         "rain(t)",
+        # "temp(t)",
         "searches(t-1)",
-        "temp(t-1)",
         "sun(t-1)",
         "rain(t-1)",
+        # "temp(t-1)",
     ]
     print(len(model.adjacency_matrices_))
 
@@ -56,7 +68,7 @@ def apply_varlingam(df):
     dot
 
 
-# apply_varlingam(df)
+apply_varlingam(df)
 
 
 def apply_causal_learn_pc(df):
@@ -81,4 +93,25 @@ def apply_causal_learn_pc(df):
     # X4: snowfall
 
 
-# apply_causal_learn_pc(df)
+apply_causal_learn_pc(df)
+
+
+def apply_FCI(df):
+    from causallearn.search.ConstraintBased.FCI import fci
+    from causallearn.utils.GraphUtils import GraphUtils
+    import numpy as np
+    from causallearn.utils.cit import fisherz
+
+    data_list = []
+
+    for column in df.columns:
+        data_list.append(df[column].to_numpy())
+
+    data = np.array(data_list).T
+    G = fci(dataset=data, independence_test_method=fisherz, alpha=0.05)
+    # visualization
+    pdy = GraphUtils.to_pydot(G[0])
+    pdy.write_png("FCI.png")
+
+
+apply_FCI(df)

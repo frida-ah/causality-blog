@@ -63,13 +63,19 @@ def get_weather_data():
     pdf_weather = pd.read_csv("./data/weather_data.csv", sep=";", parse_dates=["date"])
     pdf_weather = pdf_weather.loc[pdf_weather.loc[:, "date"] >= datetime.datetime(2018, 1, 1)]
     pdf_weather = pdf_weather[["date", "daily_avg_temperature", "duration_sunshine", "duration_rainfall"]]
+
+    pdf_weather = pdf_weather[["date", "daily_avg_temperature", "duration_sunshine", "duration_rainfall"]]
     pdf_weather["daily_avg_temperature"] = pdf_weather["daily_avg_temperature"] / 10
     pdf_weather = set_columns_type(pdf_weather, ["duration_sunshine", "duration_rainfall"], "float64")
     pdf_weather["duration_sunshine"] = pdf_weather["duration_sunshine"] / 100
     pdf_weather["duration_rainfall"] = pdf_weather["duration_rainfall"] / 100
     pdf_weather = pdf_weather.set_index(date_col)
     pdf_weather = pdf_weather.resample("W").agg(
-        {"daily_avg_temperature": np.mean, "duration_sunshine": np.mean, "duration_rainfall": np.mean}
+        {
+            "daily_avg_temperature": np.mean,
+            "duration_sunshine": np.mean,
+            "duration_rainfall": np.mean,
+        }
     )
 
     pdf_weather.reset_index(inplace=True)
@@ -78,7 +84,7 @@ def get_weather_data():
 
 def prepare_input_data():
     # time search: 2018 - 2020, aggregation on week level
-    pdf_searches = create_test_data("ijs")
+    pdf_searches = create_test_data("softijs")
     # time weather: 2018 - 2020, aggregation on week level
     pdf_weather = get_weather_data()
 

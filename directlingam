@@ -1,13 +1,9 @@
 digraph {
 	searches
-	temp
 	sun
-	rain
-	temp -> searches [label=0.50]
-	sun -> searches [label=4.02]
-	rain -> temp [label=-2.06]
+	temp
 	temp -> sun [label=0.15]
-	rain -> sun [label=-1.07]
+	searches -> temp [label=0.15]
 	{
 		rank=same
 	}
