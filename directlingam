@@ -1,9 +1,15 @@
 digraph {
 	searches
-	sun
 	temp
-	temp -> sun [label=0.15]
-	searches -> temp [label=0.15]
+	sun
+	rain
+	airpressure
+	cloudiness
+	searches -> temp [label=0.06]
+	sun -> temp [label=0.69]
+	searches -> sun [label=0.06]
+	rain -> sun [label=-0.89]
+	rain -> airpressure [label=-27.70]
 	{
 		rank=same
 	}

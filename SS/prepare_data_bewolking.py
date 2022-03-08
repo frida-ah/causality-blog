@@ -59,22 +59,24 @@ def set_columns_type(df, list_columns, data_type):
 
 
 def get_weather_data():
-    date_col = "date"
-    pdf_weather = pd.read_csv("./data/weather_data_extended.csv", sep=";", parse_dates=["date"])
-    pdf_weather = pdf_weather.loc[pdf_weather.loc[:, "date"] >= datetime.datetime(2018, 1, 1)]
+    date_col = "YYYYMMDD"
+    pdf_weather = pd.read_csv("./data/weather.csv", sep=";", parse_dates=[date_col])
+    pdf_weather = pdf_weather.loc[pdf_weather.loc[:, date_col] >= datetime.datetime(2018, 1, 1)]
+    # NG=Mean daily cloud cover (in octants, 9=sky invisible)
+    # TG=Daily mean temperature in (0.1 degrees Celsius)
+    # SQ=Sunshine duration (in 0.1 hour) calculated from global radiation
+    pdf_weather = pdf_weather[[date_col, "NG", "TG", "SQ"]]
 
-    pdf_weather["daily_avg_temperature"] = pdf_weather["daily_avg_temperature"] / 10
-    pdf_weather = set_columns_type(pdf_weather, ["sunshine_duration", "rainfall_duration"], "float64")
-    pdf_weather["sunshine_duration"] = pdf_weather["sunshine_duration"] / 10
-    pdf_weather["rainfall_duration"] = pdf_weather["rainfall_duration"] / 10
-    pdf_weather = pdf_weather.set_index(date_col)
+    pdf_weather["daily_avg_temperature"] = pdf_weather["TG"] / 10
+    pdf_weather = set_columns_type(pdf_weather, ["SQ"], "float64")
+    pdf_weather["duration_sunshine"] = pdf_weather["SQ"] / 10
+    pdf_weather = pdf_weather.rename(columns={"NG": "daily_avg_cloudiness", "YYYYMMDD": "date"})
+    pdf_weather = pdf_weather.set_index("date")
     pdf_weather = pdf_weather.resample("W").agg(
         {
             "daily_avg_temperature": np.mean,
-            "sunshine_duration": np.mean,
-            "rainfall_duration": np.mean,
-            "avg_air_pressure": np.mean,
-            "avg_cloudiness": np.mean,
+            "duration_sunshine": np.mean,
+            "daily_avg_cloudiness": np.mean,
         }
     )
 

@@ -5,9 +5,11 @@ df = df[
     [
         "date",
         "searches",
-        "duration_sunshine",
-        # "duration_rainfall",
         "daily_avg_temperature",
+        "sunshine_duration",
+        "rainfall_duration",
+        "avg_air_pressure",
+        "avg_cloudiness",
     ]
 ]
 df = df.set_index("date")
@@ -27,9 +29,11 @@ def apply_directlingam(df):
     print(len(model.adjacency_matrix_))
     labels = [
         "searches",
-        "sun",
-        # "rain",
         "temp",
+        "sun",
+        "rain",
+        "airpressure",
+        "cloudiness",
     ]
     dot = make_dot(model.adjacency_matrix_, ignore_shape=True, lower_limit=0.05, labels=labels)
     dot.format = "png"
@@ -68,7 +72,7 @@ def apply_varlingam(df):
     dot
 
 
-apply_varlingam(df)
+# apply_varlingam(df)
 
 
 def apply_causal_learn_pc(df):
@@ -87,10 +91,12 @@ def apply_causal_learn_pc(df):
     cg = pc(data, 0.05, fisherz, True, 0, 0)
 
     cg.draw_pydot_graph()  # visualization using pydot
-    # X1: searches
-    # X2: temperature
-    # X3: rainfall
-    # X4: snowfall
+    # "searches",
+    # "temp",
+    # "sun",
+    # "rain",
+    # "airpressure",
+    # "cloudiness",
 
 
 apply_causal_learn_pc(df)
@@ -114,4 +120,4 @@ def apply_FCI(df):
     pdy.write_png("FCI.png")
 
 
-apply_FCI(df)
+# apply_FCI(df)
